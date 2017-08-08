@@ -70,9 +70,7 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Ho
     }
 
     private void imageNotLoad(Holder holder) {
-        Picasso.with(mContext)
-                .load(R.drawable.unbaked)
-                .into(holder.mThumbnail);
+        holder.mThumbnail.setBackgroundColor(mContext.getResources().getColor(R.color.colorAlt));
         holder.noImg.setVisibility(View.VISIBLE);
     }
 

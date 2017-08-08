@@ -4,7 +4,6 @@
     android:id="@+id/recyclerView_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimaryDark"
     android:clipChildren="false"
     android:clipToPadding="false"
     tools:context="me.asl.assel.bakingapp.MainActivity">

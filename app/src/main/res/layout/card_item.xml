@@ -8,7 +8,6 @@
     android:layout_margin="10dp"
     android:background="@color/colorPrimaryDark"
     android:elevation="5dp"
-    app:cardBackgroundColor="@color/cardview_light_background"
     app:cardCornerRadius="25dp"
     app:cardElevation="10dp">
 
@@ -29,7 +28,6 @@
             android:contentDescription="The Card"
             android:cropToPadding="false"
             android:scaleType="centerCrop"
-            android:src="@mipmap/ic_launcher"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -69,13 +67,13 @@
             android:layout_marginBottom="0dp"
             android:layout_marginLeft="0dp"
             android:layout_marginRight="0dp"
+            android:background="#77000000"
             android:textAlignment="center"
+            android:textColor="@android:color/white"
             android:textSize="34sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            android:textColor="@android:color/white"
-            android:background="#77000000"/>
+            app:layout_constraintRight_toRightOf="parent" />
 
         <TextView
             android:id="@+id/count"

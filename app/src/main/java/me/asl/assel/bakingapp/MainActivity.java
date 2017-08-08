@@ -4,33 +4,23 @@ import android.app.Activity;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-
-import com.google.gson.Gson;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import me.asl.assel.bakingapp.Presenter.RecipeCardAdapter;
-import me.asl.assel.bakingapp.network.Request;
 import me.asl.assel.bakingapp.model.Recipe;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+
+import static me.asl.assel.bakingapp.SplashActivity.DATA;
 
 public class MainActivity extends Activity {
     @BindView(R.id.recyclerView_main)
     RecyclerView recyclerView;
-    static String DATA = "data";
 
     List<Recipe> list;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,29 +38,11 @@ public class MainActivity extends Activity {
 
         if (savedInstanceState != null) {
             list = savedInstanceState.getParcelableArrayList(DATA);
-            RecipeCardAdapter adapter = new RecipeCardAdapter(list);
-            recyclerView.setAdapter(adapter);
         } else {
-            Request request = new Request();
-            request.getCall().enqueue(new Callback<List<Recipe>>() {
-                @Override
-                public void onResponse(@NonNull Call<List<Recipe>> call, @NonNull Response<List<Recipe>> response) {
-                    list = response.body();
-                    if (list != null) {
-                        for (Recipe recipe : list) {
-                            Log.d("RESPONSE", new Gson().toJson(recipe));
-                        }
-                        RecipeCardAdapter adapter = new RecipeCardAdapter(list);
-                        recyclerView.setAdapter(adapter);
-                    }
-                }
-
-                @Override
-                public void onFailure(@NonNull Call<List<Recipe>> call, @NonNull Throwable t) {
-                    t.printStackTrace();
-                }
-            });
+            list = getIntent().getExtras().getParcelableArrayList(DATA);
         }
+        RecipeCardAdapter adapter = new RecipeCardAdapter(list);
+        recyclerView.setAdapter(adapter);
     }
 
 
@@ -79,4 +51,7 @@ public class MainActivity extends Activity {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(DATA, (ArrayList<? extends Parcelable>) list);
     }
+
+
+
 }

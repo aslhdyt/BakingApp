@@ -14,17 +14,18 @@ import retrofit2.http.GET;
  */
 
 public class Request {
-    private static final String BASE_URL = "https://d17h27t6h515a5.cloudfront.net/";
+    private static final String API_URL = "https://d17h27t6h515a5.cloudfront.net/";
     private Call<List<Recipe>> call;
 
-    public Request() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(new OkHttpClient.Builder().build())
-                .build();
 
+    public Request() {
+        Retrofit.Builder retrofitBuild = new Retrofit.Builder();
+        retrofitBuild.addConverterFactory(GsonConverterFactory.create());
+        retrofitBuild.client(new OkHttpClient.Builder().build());
+        retrofitBuild.baseUrl(API_URL);
+        Retrofit retrofit = retrofitBuild.build();
         call = (retrofit.create(RequestInterface.class)).getJson();
+
     }
 
     public Call<List<Recipe>> getCall () {
