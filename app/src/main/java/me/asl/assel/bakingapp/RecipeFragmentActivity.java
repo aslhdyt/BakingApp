@@ -8,10 +8,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import me.asl.assel.bakingapp.Presenter.fragment.FragmentInterface;
-import me.asl.assel.bakingapp.Presenter.fragment.IngredientFragment;
-import me.asl.assel.bakingapp.Presenter.fragment.NavFragment;
-import me.asl.assel.bakingapp.Presenter.fragment.StepsFragment;
+import me.asl.assel.bakingapp.presenter.fragment.FragmentInterface;
+import me.asl.assel.bakingapp.presenter.fragment.IngredientFragment;
+import me.asl.assel.bakingapp.presenter.fragment.NavFragment;
+import me.asl.assel.bakingapp.presenter.fragment.StepsFragment;
 import me.asl.assel.bakingapp.model.Recipe;
 
 public class RecipeFragmentActivity extends FragmentActivity implements FragmentInterface {
@@ -139,7 +139,6 @@ public class RecipeFragmentActivity extends FragmentActivity implements Fragment
         if (btnNext.isEnabled()) btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: 8/3/17 replace Fragment steps on Next
                 FragmentChange(currentPos+1);
             }
         });

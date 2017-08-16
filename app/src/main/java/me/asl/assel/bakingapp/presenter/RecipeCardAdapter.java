@@ -1,7 +1,8 @@
-package me.asl.assel.bakingapp.Presenter;
+package me.asl.assel.bakingapp.presenter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import me.asl.assel.bakingapp.R;
 import me.asl.assel.bakingapp.RecipeFragmentActivity;
 import me.asl.assel.bakingapp.model.Recipe;
@@ -39,10 +42,9 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Ho
         final Recipe data = list.get(position);
         holder.mTitle.setText(data.getName());
         holder.count.setText(String.valueOf(data.getId()));
-        holder.mThumbnail.setOnClickListener(new View.OnClickListener() {
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: 7/21/17 go to another activity
                 Log.d("CLICK", "click on = "+data.getName());
                 Intent i = new Intent(mContext, RecipeFragmentActivity.class);
                 i.putExtra("recipe", data);
@@ -56,7 +58,6 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Ho
                     .into(holder.mThumbnail, new Callback() {
                         @Override
                         public void onSuccess() {
-                            holder.noImg.setVisibility(View.INVISIBLE);
                         }
 
                         @Override
@@ -70,8 +71,7 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Ho
     }
 
     private void imageNotLoad(Holder holder) {
-        holder.mThumbnail.setBackgroundColor(mContext.getResources().getColor(R.color.colorAlt));
-        holder.noImg.setVisibility(View.VISIBLE);
+        holder.mThumbnail.setVisibility(View.GONE);
     }
 
     @Override
@@ -84,17 +84,18 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Ho
     }
 
     class Holder extends RecyclerView.ViewHolder{
-        ImageView mThumbnail;
+        @BindView(R.id.title)
         TextView mTitle;
+        @BindView(R.id.thumbnail)
+        ImageView mThumbnail;
+        @BindView(R.id.count)
         TextView count;
-        TextView noImg;
+        @BindView(R.id.card_view)
+        CardView cardView;
 
         Holder(View itemView) {
             super(itemView);
-            mTitle = (TextView)itemView.findViewById(R.id.title);
-            count = (TextView)itemView.findViewById(R.id.count);
-            mThumbnail = (ImageView)itemView.findViewById(R.id.thumbnail);
-            noImg = (TextView)itemView.findViewById(R.id.textView_noImg);
+            ButterKnife.bind(this, itemView);
         }
 
     }

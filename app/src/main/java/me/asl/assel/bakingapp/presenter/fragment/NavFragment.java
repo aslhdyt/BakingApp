@@ -1,11 +1,10 @@
-package me.asl.assel.bakingapp.Presenter.fragment;
+package me.asl.assel.bakingapp.presenter.fragment;
 
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,18 +42,10 @@ public class NavFragment extends Fragment {
     public NavFragment() {
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @return A new instance of fragment NavFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static NavFragment newInstance(Recipe param1, int pos) {
+    public static NavFragment newInstance(Recipe recipe, int pos) {
         NavFragment fragment = new NavFragment();
         Bundle args = new Bundle();
-        args.putParcelable(ARG_RECIPE, param1);
+        args.putParcelable(ARG_RECIPE, recipe);
         args.putInt(ARG_POSITION, pos);
         fragment.setArguments(args);
         return fragment;

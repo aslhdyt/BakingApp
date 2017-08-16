@@ -11,7 +11,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import me.asl.assel.bakingapp.Presenter.RecipeCardAdapter;
+import me.asl.assel.bakingapp.presenter.RecipeCardAdapter;
 import me.asl.assel.bakingapp.model.Recipe;
 
 import static me.asl.assel.bakingapp.SplashActivity.DATA;

@@ -1,13 +1,11 @@
-package me.asl.assel.bakingapp.Presenter.fragment;
+package me.asl.assel.bakingapp.presenter.fragment;
 
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.media.MediaDataSource;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,25 +21,14 @@ import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.ui.PlaybackControlView;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
-import com.google.android.exoplayer2.upstream.FileDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
-
-import org.w3c.dom.Text;
-
-import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -56,11 +43,9 @@ import me.asl.assel.bakingapp.model.Step;
  * create an instance of this fragment.
  */
 public class StepsFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_STEP = "step";
 
-    // TODO: Rename and change types of parameters
     private Step steps;
 
     private FragmentInterface mListener;
@@ -77,18 +62,10 @@ public class StepsFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @return A new instance of fragment StepsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static StepsFragment newInstance(Step param1) {
+    public static StepsFragment newInstance(Step step) {
         StepsFragment fragment = new StepsFragment();
         Bundle args = new Bundle();
-        args.putParcelable(ARG_STEP, param1);
+        args.putParcelable(ARG_STEP, step);
         fragment.setArguments(args);
         return fragment;
     }
@@ -108,7 +85,6 @@ public class StepsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_steps, container, false);
         ButterKnife.bind(this,view);
-        // TODO: 8/4/17 implements stepsFragment layout
         textViewTest.setText(steps.getDescription());
         Log.d("CONTENT", "id: "+steps.getId()+"\nshort desc: "+steps.getShortDescription()+"\ndescription: "+steps.getDescription()+"\nthumbnail url: "+steps.getThumbnailURL()+"\nvideoUrl: "+steps.getVideoURL());
 
@@ -137,9 +113,9 @@ public class StepsFragment extends Fragment {
             }
         };
         if (!steps.getThumbnailURL().isEmpty()) {
-            Picasso.with(getActivity()).load(steps.getThumbnailURL()).placeholder(R.drawable.muffin).into(target);
+            Picasso.with(getActivity()).load(steps.getThumbnailURL()).placeholder(R.drawable.ic_video).into(target);
         } else {
-            Picasso.with(getActivity()).load(R.drawable.muffin).into(target);
+            Picasso.with(getActivity()).load(R.drawable.ic_blocked).into(target);
         }
 
         initializePlayer(Uri.parse(steps.getVideoURL()));
@@ -162,7 +138,9 @@ public class StepsFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+
         mListener = null;
+
         mExoPlayer.stop();
         mExoPlayer.release();
         mExoPlayer = null;
@@ -174,14 +152,14 @@ public class StepsFragment extends Fragment {
             TrackSelector trackSelector = new DefaultTrackSelector();
             LoadControl loadControl = new DefaultLoadControl();
             mExoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector, loadControl);
+            mPlayerView.setControllerShowTimeoutMs(1000);
             mPlayerView.setPlayer(mExoPlayer);
 
-
             // Prepare the MediaSource.
-            DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
             String userAgent = Util.getUserAgent(getContext(), "BakingApp");
-            DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getContext(), userAgent, bandwidthMeter);
+            DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getContext(), userAgent);
             ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
+
 
             Log.d("URI CHECK", String.valueOf(mediaUri));
             MediaSource mediaSource = new ExtractorMediaSource(

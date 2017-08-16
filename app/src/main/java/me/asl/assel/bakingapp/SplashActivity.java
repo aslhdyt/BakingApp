@@ -49,28 +49,33 @@ public class SplashActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(@NonNull Call<List<Recipe>> call, @NonNull Throwable t) {
                     t.printStackTrace();
+                    localJson();
                 }
             });
-        } else { //local Json file
-            Gson gson = new Gson();
-            Type listType = new TypeToken<List<Recipe>>(){}.getType();
-            try {
-                InputStream is = getAssets().open("baking.json");
-                int size = is.available();
-                byte[] buffer = new byte[size];
-                is.read(buffer);
-                is.close();
-                String json = new String(buffer, "UTF-8");
+        } else localJson();
+    }
 
 
-                List<Recipe> list = gson.fromJson(json, listType);
-                Intent i = new Intent(getBaseContext(), MainActivity.class);
-                i.putParcelableArrayListExtra(DATA, (ArrayList<? extends Parcelable>) list);
-                startActivity(i);
-                finish();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    //placeholder
+    private void localJson () {
+        Gson gson = new Gson();
+        Type listType = new TypeToken<List<Recipe>>(){}.getType();
+        try {
+            InputStream is = getAssets().open("baking.json");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            String json = new String(buffer, "UTF-8");
+
+
+            List<Recipe> list = gson.fromJson(json, listType);
+            Intent i = new Intent(getBaseContext(), MainActivity.class);
+            i.putParcelableArrayListExtra(DATA, (ArrayList<? extends Parcelable>) list);
+            startActivity(i);
+            finish();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -7,7 +7,7 @@
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@drawable/muffin"/>
+            android:src="@drawable/ic_muffin"/>
     </item>
 
 </layer-list>

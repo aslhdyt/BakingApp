@@ -8,12 +8,13 @@
     android:layout_margin="10dp"
     android:background="@color/colorPrimaryDark"
     android:elevation="5dp"
-    app:cardCornerRadius="25dp"
+    app:cardCornerRadius="12dp"
     app:cardElevation="10dp">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="#77000000">
 
         <ImageView
             android:id="@+id/thumbnail"
@@ -36,54 +37,34 @@
             app:layout_constraintVertical_bias="0.0" />
 
         <TextView
-            android:id="@+id/textView_noImg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
-            android:rotation="-45"
-            android:shadowColor="@android:color/black"
-            android:shadowDx="1"
-            android:shadowDy="1"
-            android:shadowRadius="10"
-            android:text="The Image is Unbaked"
-            android:textAllCaps="false"
-            android:textColor="@color/colorAccent"
-            android:textSize="30sp"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_bias="0.56"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
             android:id="@+id/title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_below="@id/thumbnail"
             android:layout_marginBottom="0dp"
             android:layout_marginLeft="0dp"
-            android:layout_marginRight="0dp"
+            android:layout_marginRight="8dp"
             android:background="#77000000"
+            android:padding="8dp"
             android:textAlignment="center"
             android:textColor="@android:color/white"
-            android:textSize="34sp"
+            android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent" />
+            app:layout_constraintRight_toLeftOf="@+id/count" />
 
         <TextView
             android:id="@+id/count"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_below="@id/title"
-            android:layout_marginEnd="32dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:text="##"
             android:textAlignment="center"
-            android:textColor="@android:color/white"
+            android:textColor="@color/colorAccentDark"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
