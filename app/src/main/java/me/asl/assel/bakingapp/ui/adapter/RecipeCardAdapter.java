@@ -1,4 +1,4 @@
-package me.asl.assel.bakingapp.presenter;
+package me.asl.assel.bakingapp.ui.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -19,7 +19,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import me.asl.assel.bakingapp.R;
-import me.asl.assel.bakingapp.RecipeFragmentActivity;
+import me.asl.assel.bakingapp.ui.RecipeFragmentActivity;
 import me.asl.assel.bakingapp.model.Recipe;
 
 /**

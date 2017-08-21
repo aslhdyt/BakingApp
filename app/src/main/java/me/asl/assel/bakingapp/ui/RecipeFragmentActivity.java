@@ -1,18 +1,31 @@
-package me.asl.assel.bakingapp;
+package me.asl.assel.bakingapp.ui;
 
 import android.content.res.Configuration;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
-import me.asl.assel.bakingapp.presenter.fragment.FragmentInterface;
-import me.asl.assel.bakingapp.presenter.fragment.IngredientFragment;
-import me.asl.assel.bakingapp.presenter.fragment.NavFragment;
-import me.asl.assel.bakingapp.presenter.fragment.StepsFragment;
+import me.asl.assel.bakingapp.R;
+import me.asl.assel.bakingapp.ui.fragment.FragmentInterface;
+import me.asl.assel.bakingapp.ui.fragment.IngredientFragment;
+import me.asl.assel.bakingapp.ui.fragment.NavFragment;
+import me.asl.assel.bakingapp.ui.fragment.StepsFragment;
 import me.asl.assel.bakingapp.model.Recipe;
+
+import static me.asl.assel.bakingapp.provider.Contract.BASE_CONTENT_URI;
+import static me.asl.assel.bakingapp.provider.Contract.PATH_RECIPES;
+import static me.asl.assel.bakingapp.provider.Contract.RecipeEntrys.COLUMN_INGREDIENT_SHORT_DESC;
+import static me.asl.assel.bakingapp.provider.Contract.RecipeEntrys.COLUMN_RECIPE_ID;
+
 
 public class RecipeFragmentActivity extends FragmentActivity implements FragmentInterface {
 
@@ -41,13 +54,13 @@ public class RecipeFragmentActivity extends FragmentActivity implements Fragment
 
         if (savedInstanceState != null) {
             fragmentIndex = savedInstanceState.getInt(STATE_TAG, 0);
-            Log.d("SAVED_STATE","index = "+fragmentIndex);
+            Log.i("SAVED_STATE","index = "+fragmentIndex);
             if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
                 ORIENTATION_FRAME = R.id.frame_main; //frame_main for portrait
 
                 FragmentChange(fragmentIndex);
 
-                Log.d("ORIENTATION", "FRAME CHANGE TO PORTRAIT");
+                Log.i("ORIENTATION", "FRAME CHANGE TO PORTRAIT");
             } else {
                 ORIENTATION_FRAME = R.id.frame_content; //frame_content for landscape
 
@@ -58,7 +71,7 @@ public class RecipeFragmentActivity extends FragmentActivity implements Fragment
                 ft.replace(R.id.frame_main, navFragment, TAG_RECIPE_NAV);
                 ft.commit();
 
-                Log.d("ORIENTATION", "FRAME CHANGE TO LANDSCAPE");
+                Log.i("ORIENTATION", "FRAME CHANGE TO LANDSCAPE");
             }
         } else {
             if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -72,9 +85,61 @@ public class RecipeFragmentActivity extends FragmentActivity implements Fragment
             ft.commit();
         }
 
-
-
     }
+
+
+    Menu mOptionsMenu;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        mOptionsMenu = menu;
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.recipe_options, menu);
+        Uri URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_RECIPES).build();
+        Cursor cursor = getContentResolver().query(URI, new String[]{COLUMN_INGREDIENT_SHORT_DESC},
+                COLUMN_RECIPE_ID+"=?", new String[]{String.valueOf(recipe.getId())}, null);
+        //For debug
+        Log.i("CURSOR SIZE", "COUNT: "+cursor.getCount());
+        swapMenuOptions(cursor.getCount() > 0);
+        cursor.close();
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_fav:
+                Toast.makeText(this,
+                        "This recipe data = " +
+                                "\nid: "+recipe.getId()+
+                                "\nname: "+recipe.getName()+
+                                "\nimage url: "+recipe.getImage(),
+                        Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.action_unFav:
+                    Toast.makeText(this,
+                            "This recipe data = " +
+                                    "\nid: "+recipe.getId()+
+                                    "\nname: "+recipe.getName()+
+                                    "\nimage url: "+recipe.getImage(),
+                            Toast.LENGTH_SHORT).show();
+                break;
+        }
+        return true;
+    }
+
+    private void swapMenuOptions (boolean isFavorite) {
+        MenuItem fav = mOptionsMenu.findItem(R.id.action_fav);
+        MenuItem unFav = mOptionsMenu.findItem(R.id.action_unFav);
+        if (isFavorite) {
+            fav.setVisible(false);
+            unFav.setVisible(true);
+        } else {
+            fav.setVisible(true);
+            unFav.setVisible(false);
+        }
+    }
+
 
 
     @Override
@@ -122,7 +187,7 @@ public class RecipeFragmentActivity extends FragmentActivity implements Fragment
 
     @Override
     public void CreateNavButton(View viewReference, final int currentPos) {//currentPos index 0 is always ingredients. steps start from index 1
-        Log.d("NAV BTN", "currentPos = "+currentPos);
+        Log.i("NAV BTN", "currentPos = "+currentPos);
         Button btnPrev = (Button) viewReference.findViewById(R.id.button_prev);
         Button btnNext = (Button) viewReference.findViewById(R.id.button_next);
         if(currentPos == 0) {
@@ -151,6 +216,5 @@ public class RecipeFragmentActivity extends FragmentActivity implements Fragment
         });
 
     }
-
 
 }

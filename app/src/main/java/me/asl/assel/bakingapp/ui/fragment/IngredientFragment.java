@@ -1,4 +1,4 @@
-package me.asl.assel.bakingapp.presenter.fragment;
+package me.asl.assel.bakingapp.ui.fragment;
 
 import android.content.Context;
 import android.content.res.Configuration;

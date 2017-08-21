@@ -1,4 +1,4 @@
-package me.asl.assel.bakingapp.presenter.fragment;
+package me.asl.assel.bakingapp.ui.fragment;
 
 import android.content.Context;
 import android.content.res.Configuration;
@@ -152,7 +152,7 @@ public class StepsFragment extends Fragment {
             TrackSelector trackSelector = new DefaultTrackSelector();
             LoadControl loadControl = new DefaultLoadControl();
             mExoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector, loadControl);
-            mPlayerView.setControllerShowTimeoutMs(1000);
+            mPlayerView.setControllerShowTimeoutMs(3000);
             mPlayerView.setPlayer(mExoPlayer);
 
             // Prepare the MediaSource.

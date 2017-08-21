@@ -7,9 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
 
-import me.asl.assel.bakingapp.MainActivity;
 import me.asl.assel.bakingapp.R;
-import me.asl.assel.bakingapp.SplashActivity;
+import me.asl.assel.bakingapp.ui.SplashActivity;
 
 /**
  * Implementation of App Widget functionality.
@@ -38,6 +37,8 @@ public class RecipeWidget extends AppWidgetProvider {
             updateAppWidget(context, appWidgetManager, appWidgetId);
         }
     }
+
+
 
     @Override
     public void onEnabled(Context context) {

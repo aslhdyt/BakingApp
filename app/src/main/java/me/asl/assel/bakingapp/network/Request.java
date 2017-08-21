@@ -25,7 +25,6 @@ public class Request {
         retrofitBuild.baseUrl(API_URL);
         Retrofit retrofit = retrofitBuild.build();
         call = (retrofit.create(RequestInterface.class)).getJson();
-
     }
 
     public Call<List<Recipe>> getCall () {

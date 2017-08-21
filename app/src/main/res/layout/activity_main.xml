@@ -6,6 +6,6 @@
     android:layout_height="match_parent"
     android:clipChildren="false"
     android:clipToPadding="false"
-    tools:context="me.asl.assel.bakingapp.MainActivity">
+    tools:context="me.asl.assel.bakingapp.ui.MainActivity">
 
 </android.support.v7.widget.RecyclerView>

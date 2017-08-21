@@ -1,4 +1,4 @@
-package me.asl.assel.bakingapp;
+package me.asl.assel.bakingapp.ui;
 
 import android.content.Intent;
 import android.os.Parcelable;

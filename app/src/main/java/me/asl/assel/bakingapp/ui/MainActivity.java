@@ -1,4 +1,4 @@
-package me.asl.assel.bakingapp;
+package me.asl.assel.bakingapp.ui;
 
 import android.app.Activity;
 import android.content.res.Configuration;
@@ -11,10 +11,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import me.asl.assel.bakingapp.presenter.RecipeCardAdapter;
+import me.asl.assel.bakingapp.R;
+import me.asl.assel.bakingapp.ui.adapter.RecipeCardAdapter;
 import me.asl.assel.bakingapp.model.Recipe;
-
-import static me.asl.assel.bakingapp.SplashActivity.DATA;
 
 public class MainActivity extends Activity {
     @BindView(R.id.recyclerView_main)
@@ -37,9 +36,9 @@ public class MainActivity extends Activity {
         recyclerView.setLayoutManager(manager);
 
         if (savedInstanceState != null) {
-            list = savedInstanceState.getParcelableArrayList(DATA);
+            list = savedInstanceState.getParcelableArrayList(SplashActivity.DATA);
         } else {
-            list = getIntent().getExtras().getParcelableArrayList(DATA);
+            list = getIntent().getExtras().getParcelableArrayList(SplashActivity.DATA);
         }
         RecipeCardAdapter adapter = new RecipeCardAdapter(list);
         recyclerView.setAdapter(adapter);
@@ -49,7 +48,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(DATA, (ArrayList<? extends Parcelable>) list);
+        outState.putParcelableArrayList(SplashActivity.DATA, (ArrayList<? extends Parcelable>) list);
     }
 
 
