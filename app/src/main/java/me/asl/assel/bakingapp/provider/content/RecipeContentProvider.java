@@ -1,4 +1,4 @@
-package me.asl.assel.bakingapp.provider;
+package me.asl.assel.bakingapp.provider.content;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.media.UnsupportedSchemeException;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,11 +14,6 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import static me.asl.assel.bakingapp.provider.Contract.AUTHORITY;
-import static me.asl.assel.bakingapp.provider.Contract.PATH_RECIPES;
-import static me.asl.assel.bakingapp.provider.Contract.RecipeEntrys.TABLE_NAME;
-import static me.asl.assel.bakingapp.provider.Contract.RecipeEntrys._ID;
 
 /**
  * Created by assel on 8/21/17.
@@ -39,8 +33,8 @@ public class RecipeContentProvider extends ContentProvider {
         // Initialize a UriMatcher
         UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         // Add URI matches
-        uriMatcher.addURI(AUTHORITY, PATH_RECIPES, RECIPES);
-        uriMatcher.addURI(AUTHORITY, PATH_RECIPES + "/#", RECIPE_ID);
+        uriMatcher.addURI(Contract.AUTHORITY, Contract.PATH_RECIPES, RECIPES);
+        uriMatcher.addURI(Contract.AUTHORITY, Contract.PATH_RECIPES + "/#", RECIPE_ID);
         return uriMatcher;
     }
     private DBHelper dbHelper;
@@ -70,7 +64,7 @@ public class RecipeContentProvider extends ContentProvider {
         switch (match) {
             // Query for the plants directory
             case RECIPES:
-                retCursor = db.query(TABLE_NAME,
+                retCursor = db.query(Contract.RecipeEntrys.TABLE_NAME,
                         projection,
                         selection,
                         selectionArgs,
@@ -80,7 +74,7 @@ public class RecipeContentProvider extends ContentProvider {
                 break;
             case RECIPE_ID:
                 String id = uri.getPathSegments().get(1);
-                retCursor = db.query(TABLE_NAME,
+                retCursor = db.query(Contract.RecipeEntrys.TABLE_NAME,
                         projection,
                         "_id=?",
                         new String[]{id},
@@ -116,7 +110,7 @@ public class RecipeContentProvider extends ContentProvider {
         switch (match) {
             case RECIPES:
                 // Insert new values into the database
-                long id = db.insert(TABLE_NAME, null, contentValues);
+                long id = db.insert(Contract.RecipeEntrys.TABLE_NAME, null, contentValues);
                 if (id > 0) {
                     returnUri = ContentUris.withAppendedId(Contract.RecipeEntrys.CONTENT_URI, id);
                 } else {
@@ -146,7 +140,7 @@ public class RecipeContentProvider extends ContentProvider {
                 // Get the plant ID from the URI path
                 String id = uri.getPathSegments().get(1);
                 // Use selections/strings to filter for this ID
-                recipeDeleted = db.delete(TABLE_NAME, "_id=?", new String[]{id});
+                recipeDeleted = db.delete(Contract.RecipeEntrys.TABLE_NAME, "_id=?", new String[]{id});
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -170,11 +164,11 @@ public class RecipeContentProvider extends ContentProvider {
 
         switch (match) {
             case RECIPES:
-                recipeUpdated = db.update(TABLE_NAME, contentValues, s, strings);
+                recipeUpdated = db.update(Contract.RecipeEntrys.TABLE_NAME, contentValues, s, strings);
                 break;
             case RECIPE_ID:
-                if (s == null) s = _ID + "=?";
-                else s += " AND " + _ID + "=?";
+                if (s == null) s = Contract.RecipeEntrys._ID + "=?";
+                else s += " AND " + Contract.RecipeEntrys._ID + "=?";
                 // Get the place ID from the URI path
                 String id = uri.getPathSegments().get(1);
                 // Append any existing selection options to the ID filter
@@ -185,7 +179,7 @@ public class RecipeContentProvider extends ContentProvider {
                     stringsList.add(id);
                     strings = stringsList.toArray(new String[stringsList.size()]);
                 }
-                recipeUpdated = db.update(TABLE_NAME, contentValues, s, strings);
+                recipeUpdated = db.update(Contract.RecipeEntrys.TABLE_NAME, contentValues, s, strings);
                 break;
             // Default exception
             default:

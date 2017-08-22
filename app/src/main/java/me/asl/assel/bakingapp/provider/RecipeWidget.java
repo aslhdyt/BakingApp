@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import me.asl.assel.bakingapp.R;
 import me.asl.assel.bakingapp.ui.SplashActivity;

@@ -1,4 +1,4 @@
-package me.asl.assel.bakingapp.provider;
+package me.asl.assel.bakingapp.provider.content;
 
 import android.net.Uri;
 import android.provider.BaseColumns;

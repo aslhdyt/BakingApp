@@ -34,6 +34,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import me.asl.assel.bakingapp.R;
 import me.asl.assel.bakingapp.model.Step;
+import me.asl.assel.bakingapp.ui.media.ExoPlayerVideoHandler;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -50,7 +51,6 @@ public class StepsFragment extends Fragment {
 
     private FragmentInterface mListener;
 
-    private SimpleExoPlayer mExoPlayer;
 
     @BindView(R.id.exoPlayerView)
     SimpleExoPlayerView mPlayerView;
@@ -118,11 +118,24 @@ public class StepsFragment extends Fragment {
             Picasso.with(getActivity()).load(R.drawable.ic_blocked).into(target);
         }
 
-        initializePlayer(Uri.parse(steps.getVideoURL()));
-
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (steps.getVideoURL() != null && mPlayerView != null) {
+            Uri uri = Uri.parse(steps.getVideoURL());
+            ExoPlayerVideoHandler.getInstance().prepareExoPlayerForUri(getContext(), uri, mPlayerView);
+            ExoPlayerVideoHandler.getInstance().goToForeground();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        ExoPlayerVideoHandler.getInstance().goToBackground();
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -138,41 +151,35 @@ public class StepsFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-
         mListener = null;
-
-        mExoPlayer.stop();
-        mExoPlayer.release();
-        mExoPlayer = null;
     }
 
-    private void initializePlayer(Uri mediaUri) {
-        if (mExoPlayer == null) {
-            // Create an instance of the ExoPlayer.
-            TrackSelector trackSelector = new DefaultTrackSelector();
-            LoadControl loadControl = new DefaultLoadControl();
-            mExoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector, loadControl);
-            mPlayerView.setControllerShowTimeoutMs(3000);
-            mPlayerView.setPlayer(mExoPlayer);
-
-            // Prepare the MediaSource.
-            String userAgent = Util.getUserAgent(getContext(), "BakingApp");
-            DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getContext(), userAgent);
-            ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
-
-
-            Log.d("URI CHECK", String.valueOf(mediaUri));
-            MediaSource mediaSource = new ExtractorMediaSource(
-                    mediaUri,
-                    dataSourceFactory,
-                    extractorsFactory,
-                    null,
-                    null
-            );
-
-            mExoPlayer.prepare(mediaSource);
-            mExoPlayer.setPlayWhenReady(true);
-        }
-    }
+//    private void initializePlayer(Uri mediaUri) {
+//        if (mExoPlayer == null) {
+//            // Create an instance of the ExoPlayer.
+//            TrackSelector trackSelector = new DefaultTrackSelector();
+//            LoadControl loadControl = new DefaultLoadControl();
+//            mExoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector, loadControl);
+//            mPlayerView.setControllerShowTimeoutMs(3000);
+//            mPlayerView.setPlayer(mExoPlayer);
+//
+//            // Prepare the MediaSource.
+//            String userAgent = Util.getUserAgent(getContext(), "BakingApp");
+//            DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getContext(), userAgent);
+//            ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
+//
+//            Log.d("URI CHECK", String.valueOf(mediaUri));
+//            MediaSource mediaSource = new ExtractorMediaSource(
+//                    mediaUri,
+//                    dataSourceFactory,
+//                    extractorsFactory,
+//                    null,
+//                    null
+//            );
+//
+//            mExoPlayer.prepare(mediaSource);
+//            mExoPlayer.setPlayWhenReady(true);
+//        }
+//    }
 
 }
