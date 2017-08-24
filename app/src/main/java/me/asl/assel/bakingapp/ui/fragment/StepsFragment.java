@@ -154,7 +154,12 @@ public class StepsFragment extends Fragment {
         mListener = null;
     }
 
-//    private void initializePlayer(Uri mediaUri) {
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ExoPlayerVideoHandler.getInstance().releaseVideoPlayer();
+    }
+    //    private void initializePlayer(Uri mediaUri) {
 //        if (mExoPlayer == null) {
 //            // Create an instance of the ExoPlayer.
 //            TrackSelector trackSelector = new DefaultTrackSelector();

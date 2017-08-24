@@ -20,7 +20,6 @@ import me.asl.assel.bakingapp.ui.fragment.IngredientFragment;
 import me.asl.assel.bakingapp.ui.fragment.NavFragment;
 import me.asl.assel.bakingapp.ui.fragment.StepsFragment;
 import me.asl.assel.bakingapp.model.Recipe;
-import me.asl.assel.bakingapp.ui.media.ExoPlayerVideoHandler;
 
 import static me.asl.assel.bakingapp.provider.content.Contract.BASE_CONTENT_URI;
 import static me.asl.assel.bakingapp.provider.content.Contract.PATH_RECIPES;
@@ -88,11 +87,6 @@ public class RecipeFragmentActivity extends FragmentActivity implements Fragment
 
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        ExoPlayerVideoHandler.getInstance().releaseVideoPlayer();
-    }
 
     Menu mOptionsMenu;
 
