@@ -20,6 +20,7 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
         </activity>
 
@@ -28,7 +29,9 @@
             android:authorities="me.asl.assel.bakingapp"
             android:exported="false" />
 
-        <receiver android:name=".provider.RecipeWidget">
+        <service android:name=".provider.widget.ListWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+        <receiver android:name=".provider.widget.RecipeWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>

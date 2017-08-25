@@ -1,25 +1,48 @@
 package me.asl.assel.bakingapp.ui;
 
 import android.app.Activity;
+import android.app.LoaderManager;
+import android.app.PendingIntent;
+import android.appwidget.AppWidgetManager;
+import android.content.CursorLoader;
+import android.content.Intent;
+import android.content.Loader;
 import android.content.res.Configuration;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.RemoteViews;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import me.asl.assel.bakingapp.R;
+import me.asl.assel.bakingapp.provider.widget.ListWidgetService;
 import me.asl.assel.bakingapp.ui.adapter.RecipeCardAdapter;
 import me.asl.assel.bakingapp.model.Recipe;
 
-public class MainActivity extends Activity {
+import static me.asl.assel.bakingapp.provider.content.Contract.BASE_CONTENT_URI;
+import static me.asl.assel.bakingapp.provider.content.Contract.PATH_RECIPES;
+import static me.asl.assel.bakingapp.provider.content.Contract.RecipeEntrys.COLUMN_NAME;
+import static me.asl.assel.bakingapp.provider.content.Contract.RecipeEntrys._ID;
+import static me.asl.assel.bakingapp.provider.widget.ListWidgetService.INTENT_INGREDIENTS;
+
+public class MainActivity extends Activity implements RecipeCardAdapter.AdapterInterface{
+    private static final int LOADER_ID = 100;
     @BindView(R.id.recyclerView_main)
     RecyclerView recyclerView;
 
     List<Recipe> list;
+    private int mAppWidgetId;
+
+    RecipeCardAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,12 +61,16 @@ public class MainActivity extends Activity {
         if (savedInstanceState != null) {
             list = savedInstanceState.getParcelableArrayList(SplashActivity.DATA);
         } else {
-            list = getIntent().getExtras().getParcelableArrayList(SplashActivity.DATA);
+            mAppWidgetId = getIntent().getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,AppWidgetManager.INVALID_APPWIDGET_ID);
+            if (mAppWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
+                getLoaderManager().initLoader(0, null, loaderCallback);
+            } else {
+                list = getIntent().getExtras().getParcelableArrayList(SplashActivity.DATA);
+                adapter = new RecipeCardAdapter(list);
+                recyclerView.setAdapter(adapter);
+            }
         }
-        RecipeCardAdapter adapter = new RecipeCardAdapter(list);
-        recyclerView.setAdapter(adapter);
     }
-
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -52,5 +79,74 @@ public class MainActivity extends Activity {
     }
 
 
+    Recipe recipe;
+    @Override
+    public void onItemClick(int position) {
+        recipe = list.get(position);
+        if (mAppWidgetId == 0) {
+            Intent i = new Intent(this, RecipeFragmentActivity.class);
+            i.putExtra("recipe", recipe);
+            startActivity(i);
+        } else {
+            RemoteViews remoteViews = new RemoteViews(getBaseContext().getPackageName(), R.layout.recipe_widget);
 
+            //setup icon for launch the app
+            Intent i = new Intent(getBaseContext(), SplashActivity.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(getBaseContext(), 0, i, 0);
+            remoteViews.setOnClickPendingIntent(R.id.appwidget_img, pendingIntent);
+
+            //naming the widget
+            remoteViews.setTextViewText(R.id.widget_recipe_name,recipe.getName()+" Ingredients");
+
+            // TODO: 8/25/17 convert cursor to Ingredient;
+            Intent intent = new Intent(getBaseContext(), ListWidgetService.class);
+            i.putExtra(INTENT_INGREDIENTS, recipe.getId());
+            remoteViews.setRemoteAdapter(R.id.widget_listView, intent);
+
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getBaseContext());
+
+            appWidgetManager.updateAppWidget(mAppWidgetId, remoteViews);
+            Intent resultValue = new Intent();
+            resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+            setResult(RESULT_OK, resultValue);
+            finish();
+
+        }
+    }
+
+
+    LoaderManager.LoaderCallbacks<Cursor> loaderCallback = new LoaderManager.LoaderCallbacks<Cursor>() {
+        @Override
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            Uri URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_RECIPES).build();
+            return new CursorLoader(getBaseContext(), URI, null, null, null, null);
+        }
+
+        @Override
+        public void onLoadFinished(android.content.Loader<Cursor> loader, Cursor data) {
+            list = new ArrayList<>();
+            while (data.moveToNext()) {
+                Recipe recipe = new Recipe();
+                recipe.setId(data.getInt(data.getColumnIndex(_ID)));
+                recipe.setName(data.getString(data.getColumnIndex(COLUMN_NAME)));
+                list.add(recipe);
+            }
+            data.close();
+            if (list.size() != 0) {
+                adapter = new RecipeCardAdapter(list);
+                recyclerView.setAdapter(adapter);
+            } else {
+                Toast.makeText(getBaseContext(), "No saved Recipe Found, \nPlease Favorite your recipe first from the Action Bar menu...", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+
+
+        }
+
+        @Override
+        public void onLoaderReset(android.content.Loader<Cursor> loader) {
+
+        }
+
+    };
 }

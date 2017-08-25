@@ -1,5 +1,7 @@
 package me.asl.assel.bakingapp.ui;
 
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
@@ -14,7 +16,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import me.asl.assel.bakingapp.R;
+import me.asl.assel.bakingapp.model.Ingredient;
 import me.asl.assel.bakingapp.ui.fragment.FragmentInterface;
 import me.asl.assel.bakingapp.ui.fragment.IngredientFragment;
 import me.asl.assel.bakingapp.ui.fragment.NavFragment;
@@ -23,8 +28,15 @@ import me.asl.assel.bakingapp.model.Recipe;
 
 import static me.asl.assel.bakingapp.provider.content.Contract.BASE_CONTENT_URI;
 import static me.asl.assel.bakingapp.provider.content.Contract.PATH_RECIPES;
-import static me.asl.assel.bakingapp.provider.content.Contract.RecipeEntrys.COLUMN_INGREDIENT_SHORT_DESC;
+import static me.asl.assel.bakingapp.provider.content.Contract.RecipeEntrys.COLUMN_INGREDIENT_ITEM;
+import static me.asl.assel.bakingapp.provider.content.Contract.RecipeEntrys.COLUMN_INGREDIENT_MEASURE;
+import static me.asl.assel.bakingapp.provider.content.Contract.RecipeEntrys.COLUMN_INGREDIENT_NUM;
+import static me.asl.assel.bakingapp.provider.content.Contract.RecipeEntrys.COLUMN_INGREDIENT_QTY;
+import static me.asl.assel.bakingapp.provider.content.Contract.RecipeEntrys.COLUMN_NAME;
 import static me.asl.assel.bakingapp.provider.content.Contract.RecipeEntrys.COLUMN_RECIPE_ID;
+import static me.asl.assel.bakingapp.provider.content.Contract.RecipeEntrys.INGREDIENT_URI;
+import static me.asl.assel.bakingapp.provider.content.Contract.RecipeEntrys.RECIPE_URI;
+import static me.asl.assel.bakingapp.provider.content.Contract.RecipeEntrys._ID;
 
 
 public class RecipeFragmentActivity extends FragmentActivity implements FragmentInterface {
@@ -96,8 +108,12 @@ public class RecipeFragmentActivity extends FragmentActivity implements Fragment
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.recipe_options, menu);
         Uri URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_RECIPES).build();
-        Cursor cursor = getContentResolver().query(URI, new String[]{COLUMN_INGREDIENT_SHORT_DESC},
-                COLUMN_RECIPE_ID+"=?", new String[]{String.valueOf(recipe.getId())}, null);
+        Cursor cursor = getContentResolver().query(URI,
+                null,
+                _ID+"=?",
+                new String[]{String.valueOf(recipe.getId())},
+                null
+        );
         //For debug
         Log.i("CURSOR SIZE", "COUNT: "+cursor.getCount());
         swapMenuOptions(cursor.getCount() > 0);
@@ -109,20 +125,34 @@ public class RecipeFragmentActivity extends FragmentActivity implements Fragment
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_fav:
+
+
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(_ID, recipe.getId());
+                contentValues.put(COLUMN_NAME, recipe.getName());
+                getContentResolver().insert(RECIPE_URI, contentValues);
+
+                ArrayList<Ingredient> ingredients = recipe.getIngredients();
+                int num = 0;
+                for (Ingredient ingredient : ingredients) {
+                    num++;
+                    contentValues = new ContentValues();
+                    contentValues.put(COLUMN_RECIPE_ID, recipe.getId());
+                    contentValues.put(COLUMN_INGREDIENT_NUM, num);
+                    contentValues.put(COLUMN_INGREDIENT_ITEM, ingredient.getIngredient());
+                    contentValues.put(COLUMN_INGREDIENT_QTY, ingredient.getQuantity());
+                    contentValues.put(COLUMN_INGREDIENT_MEASURE, ingredient.getMeasure());
+                    getContentResolver().insert(INGREDIENT_URI, contentValues);
+                }
                 Toast.makeText(this,
-                        "This recipe data = " +
-                                "\nid: "+recipe.getId()+
-                                "\nname: "+recipe.getName()+
-                                "\nimage url: "+recipe.getImage(),
+                        "Recipe & Ingredients Saved",
                         Toast.LENGTH_SHORT).show();
+                swapMenuOptions(true);
                 break;
             case R.id.action_unFav:
-                    Toast.makeText(this,
-                            "This recipe data = " +
-                                    "\nid: "+recipe.getId()+
-                                    "\nname: "+recipe.getName()+
-                                    "\nimage url: "+recipe.getImage(),
-                            Toast.LENGTH_SHORT).show();
+                Uri URI = ContentUris.withAppendedId(BASE_CONTENT_URI.buildUpon().appendPath(PATH_RECIPES).build(), recipe.getId());
+                getContentResolver().delete(URI, null, null);
+                swapMenuOptions(false);
                 break;
         }
         return true;

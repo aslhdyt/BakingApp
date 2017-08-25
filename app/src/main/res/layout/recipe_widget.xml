@@ -23,10 +23,13 @@
             android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:padding="@dimen/widget_margin"
+            android:id="@+id/widget_recipe_name"
             android:text="recipe ingredient below" />
     </LinearLayout>
+
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:id="@+id/widget_listView"/>
 
 </LinearLayout>

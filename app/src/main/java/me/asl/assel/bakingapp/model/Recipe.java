@@ -28,8 +28,10 @@ public class Recipe implements Parcelable {
     @Expose
     private String image;
 
+    public Recipe() {}
 
-    protected Recipe(Parcel in) {
+
+    public Recipe(Parcel in) {
         id = in.readInt();
         name = in.readString();
         ingredients = in.createTypedArrayList(Ingredient.CREATOR);

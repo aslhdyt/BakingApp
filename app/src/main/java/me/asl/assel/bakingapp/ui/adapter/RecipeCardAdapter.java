@@ -2,6 +2,7 @@ package me.asl.assel.bakingapp.ui.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -19,8 +20,10 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import me.asl.assel.bakingapp.R;
+import me.asl.assel.bakingapp.ui.MainActivity;
 import me.asl.assel.bakingapp.ui.RecipeFragmentActivity;
 import me.asl.assel.bakingapp.model.Recipe;
+import me.asl.assel.bakingapp.ui.fragment.FragmentInterface;
 
 /**
  * Created by assel on 7/18/17.
@@ -30,6 +33,9 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Ho
     private List<Recipe> list;
     private Context mContext;
 
+    private AdapterInterface mListener;
+
+
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
         mContext = parent.getContext();
@@ -38,21 +44,26 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Ho
     }
 
     @Override
-    public void onBindViewHolder(final Holder holder, int position) {
+    public void onBindViewHolder(final Holder holder, final int position) {
+        if (mContext instanceof AdapterInterface) {
+            mListener = (AdapterInterface) mContext;
+        } else {
+            throw new RuntimeException(mContext.toString()
+                    + " must implement AdapterInterface");
+        }
+
         final Recipe data = list.get(position);
         holder.mTitle.setText(data.getName());
         holder.count.setText(String.valueOf(data.getId()));
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("CLICK", "click on = "+data.getName());
-                Intent i = new Intent(mContext, RecipeFragmentActivity.class);
-                i.putExtra("recipe", data);
-                mContext.startActivity(i);
+                mListener.onItemClick(position);
             }
         });
 
-        if(!data.getImage().equals("")) {
+
+        if(data.getImage() != null && !data.getImage().equals("")) {
             Picasso.with(mContext)
                     .load(data.getImage())
                     .into(holder.mThumbnail, new Callback() {
@@ -98,5 +109,9 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Ho
             ButterKnife.bind(this, itemView);
         }
 
+    }
+
+    public interface AdapterInterface {
+        void onItemClick(int position);
     }
 }

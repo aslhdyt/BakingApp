@@ -22,6 +22,8 @@ import java.util.Arrays;
 public class RecipeContentProvider extends ContentProvider {
     public static final int RECIPES = 100;
     public static final int RECIPE_ID = 101;
+    public static final int INGREDIENT = 102;
+    public static final int INGREDIENT_ID = 103;
 
 
     // Declare a static variable for the Uri matcher that you construct
@@ -35,6 +37,8 @@ public class RecipeContentProvider extends ContentProvider {
         // Add URI matches
         uriMatcher.addURI(Contract.AUTHORITY, Contract.PATH_RECIPES, RECIPES);
         uriMatcher.addURI(Contract.AUTHORITY, Contract.PATH_RECIPES + "/#", RECIPE_ID);
+        uriMatcher.addURI(Contract.AUTHORITY, Contract.PATH_INGREDIENT, INGREDIENT);
+        uriMatcher.addURI(Contract.AUTHORITY, Contract.PATH_INGREDIENT + "/#", INGREDIENT_ID);
         return uriMatcher;
     }
     private DBHelper dbHelper;
@@ -48,7 +52,7 @@ public class RecipeContentProvider extends ContentProvider {
     @Nullable
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
-        Log.i("QUERY", "uri: "+uri.toString()+
+        Log.d(TAG, "uri: "+uri.toString()+
             "\nprojection: "+ Arrays.toString(projection)+
             "\n selection: "+ selection+
             "\n selectionArgs: "+ Arrays.toString(selectionArgs) +
@@ -60,11 +64,11 @@ public class RecipeContentProvider extends ContentProvider {
         // Write URI match code and set a variable to return a Cursor
         int match = sUriMatcher.match(uri);
         Cursor retCursor;
-
+        String id;
         switch (match) {
             // Query for the plants directory
             case RECIPES:
-                retCursor = db.query(Contract.RecipeEntrys.TABLE_NAME,
+                retCursor = db.query(Contract.RecipeEntrys.TABLE_NAME_RECIPE,
                         projection,
                         selection,
                         selectionArgs,
@@ -73,8 +77,27 @@ public class RecipeContentProvider extends ContentProvider {
                         sortOrder);
                 break;
             case RECIPE_ID:
-                String id = uri.getPathSegments().get(1);
-                retCursor = db.query(Contract.RecipeEntrys.TABLE_NAME,
+                id = uri.getPathSegments().get(1);
+                retCursor = db.query(Contract.RecipeEntrys.TABLE_NAME_RECIPE,
+                        projection,
+                        "_id=?",
+                        new String[]{id},
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            case INGREDIENT:
+                retCursor = db.query(Contract.RecipeEntrys.TABLE_NAME_INGREDIENT,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            case INGREDIENT_ID:
+                id = uri.getPathSegments().get(1);
+                retCursor = db.query(Contract.RecipeEntrys.TABLE_NAME_INGREDIENT,
                         projection,
                         "_id=?",
                         new String[]{id},
@@ -107,16 +130,26 @@ public class RecipeContentProvider extends ContentProvider {
 
         int match = sUriMatcher.match(uri);
         Uri returnUri; // URI to be returned
+        long id;
         switch (match) {
             case RECIPES:
                 // Insert new values into the database
-                long id = db.insert(Contract.RecipeEntrys.TABLE_NAME, null, contentValues);
+                id = db.insert(Contract.RecipeEntrys.TABLE_NAME_RECIPE, null, contentValues);
                 if (id > 0) {
-                    returnUri = ContentUris.withAppendedId(Contract.RecipeEntrys.CONTENT_URI, id);
+                    returnUri = ContentUris.withAppendedId(Contract.RecipeEntrys.RECIPE_URI, id);
                 } else {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 }
                 break;
+            case INGREDIENT:
+                id = db.insert(Contract.RecipeEntrys.TABLE_NAME_INGREDIENT, null, contentValues);
+                if (id > 0) {
+                    returnUri = ContentUris.withAppendedId(Contract.RecipeEntrys.RECIPE_URI, id);
+                } else {
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                }
+                break;
+
             default:
                 throw new UnsupportedOperationException("Unknown uri: "+ uri);
         }
@@ -134,13 +167,16 @@ public class RecipeContentProvider extends ContentProvider {
         int match = sUriMatcher.match(uri);
         // Keep track of the number of deleted plants
         int recipeDeleted; // starts as 0
+        String id;
         switch (match) {
             // Handle the single item case, recognized by the ID included in the URI path
             case RECIPE_ID:
-                // Get the plant ID from the URI path
-                String id = uri.getPathSegments().get(1);
-                // Use selections/strings to filter for this ID
-                recipeDeleted = db.delete(Contract.RecipeEntrys.TABLE_NAME, "_id=?", new String[]{id});
+                id = uri.getPathSegments().get(1);
+                recipeDeleted = db.delete(Contract.RecipeEntrys.TABLE_NAME_RECIPE, Contract.RecipeEntrys._ID+"=?", new String[]{id});
+                break;
+            case INGREDIENT_ID:
+                id = uri.getPathSegments().get(1);
+                recipeDeleted = db.delete(Contract.RecipeEntrys.TABLE_NAME_INGREDIENT, Contract.RecipeEntrys._ID+"=?", new String[]{id});
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -164,7 +200,7 @@ public class RecipeContentProvider extends ContentProvider {
 
         switch (match) {
             case RECIPES:
-                recipeUpdated = db.update(Contract.RecipeEntrys.TABLE_NAME, contentValues, s, strings);
+                recipeUpdated = db.update(Contract.RecipeEntrys.TABLE_NAME_RECIPE, contentValues, s, strings);
                 break;
             case RECIPE_ID:
                 if (s == null) s = Contract.RecipeEntrys._ID + "=?";
@@ -179,7 +215,7 @@ public class RecipeContentProvider extends ContentProvider {
                     stringsList.add(id);
                     strings = stringsList.toArray(new String[stringsList.size()]);
                 }
-                recipeUpdated = db.update(Contract.RecipeEntrys.TABLE_NAME, contentValues, s, strings);
+                recipeUpdated = db.update(Contract.RecipeEntrys.TABLE_NAME_RECIPE, contentValues, s, strings);
                 break;
             // Default exception
             default:

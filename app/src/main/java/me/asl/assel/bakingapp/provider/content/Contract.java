@@ -17,19 +17,30 @@ public class Contract {
     // Define the possible paths for accessing data in this contract
     // This is the path for the "plants" directory
     public static final String PATH_RECIPES = "recipes";
+    public static final String PATH_INGREDIENT = "ingredient";
 
     public static final long INVALID_RECIPE_ID = -1;
 
     public static final class RecipeEntrys implements BaseColumns {
 
-        // TaskEntry content URI = base content URI + path
-        public static final Uri CONTENT_URI =
+        public static final Uri RECIPE_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_RECIPES).build();
+        public static final Uri INGREDIENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_INGREDIENT).build();
 
-        public static final String TABLE_NAME = "recipeIngredients";
+        //simple table for recipe
+        public static final String TABLE_NAME_RECIPE = "recipe";
         public static final String _ID = "id";
-        public static final String COLUMN_RECIPE_ID = "recipeId";
-        public static final String COLUMN_INGREDIENT_ID = "ingredientId";
-        public static final String COLUMN_INGREDIENT_SHORT_DESC = "shortDesc";
+        public static final String COLUMN_NAME = "name";
+
+        // complete data for ingredient
+        public static final String TABLE_NAME_INGREDIENT = "ingredient";
+        public static final String COLUMN_RECIPE_ID = "recipe_id";
+        public static final String COLUMN_INGREDIENT_NUM = "num";
+        public static final String COLUMN_INGREDIENT_ITEM = "item";
+        public static final String COLUMN_INGREDIENT_QTY = "qty";
+        public static final String COLUMN_INGREDIENT_MEASURE = "measure";
+
+
     }
 }
