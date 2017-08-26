@@ -31,6 +31,7 @@
 
         <service android:name=".provider.widget.ListWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
+
         <receiver android:name=".provider.widget.RecipeWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

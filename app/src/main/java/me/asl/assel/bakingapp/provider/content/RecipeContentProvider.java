@@ -52,7 +52,7 @@ public class RecipeContentProvider extends ContentProvider {
     @Nullable
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
-        Log.d(TAG, "uri: "+uri.toString()+
+        Log.d("QUERY", "uri: "+uri.toString()+
             "\nprojection: "+ Arrays.toString(projection)+
             "\n selection: "+ selection+
             "\n selectionArgs: "+ Arrays.toString(selectionArgs) +

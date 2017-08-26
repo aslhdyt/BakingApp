@@ -26,10 +26,5 @@
         android:textAlignment="textEnd"
         android:textSize="14sp" />
 
-    <View
-        android:layout_width="wrap_content"
-        android:layout_height="4dp"
-        android:layout_below="@+id/qty"
-        android:background="@color/colorAccent" />
 
 </RelativeLayout>

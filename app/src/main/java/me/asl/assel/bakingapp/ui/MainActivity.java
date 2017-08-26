@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -31,10 +32,8 @@ import static me.asl.assel.bakingapp.provider.content.Contract.BASE_CONTENT_URI;
 import static me.asl.assel.bakingapp.provider.content.Contract.PATH_RECIPES;
 import static me.asl.assel.bakingapp.provider.content.Contract.RecipeEntrys.COLUMN_NAME;
 import static me.asl.assel.bakingapp.provider.content.Contract.RecipeEntrys._ID;
-import static me.asl.assel.bakingapp.provider.widget.ListWidgetService.INTENT_INGREDIENTS;
 
 public class MainActivity extends Activity implements RecipeCardAdapter.AdapterInterface{
-    private static final int LOADER_ID = 100;
     @BindView(R.id.recyclerView_main)
     RecyclerView recyclerView;
 
@@ -89,26 +88,26 @@ public class MainActivity extends Activity implements RecipeCardAdapter.AdapterI
             startActivity(i);
         } else {
             RemoteViews remoteViews = new RemoteViews(getBaseContext().getPackageName(), R.layout.recipe_widget);
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getBaseContext());
 
             //setup icon for launch the app
-            Intent i = new Intent(getBaseContext(), SplashActivity.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(getBaseContext(), 0, i, 0);
+            Intent intent = new Intent(getBaseContext(), SplashActivity.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(getBaseContext(), 0, intent, 0);
             remoteViews.setOnClickPendingIntent(R.id.appwidget_img, pendingIntent);
 
             //naming the widget
             remoteViews.setTextViewText(R.id.widget_recipe_name,recipe.getName()+" Ingredients");
 
-            // TODO: 8/25/17 convert cursor to Ingredient;
-            Intent intent = new Intent(getBaseContext(), ListWidgetService.class);
-            i.putExtra(INTENT_INGREDIENTS, recipe.getId());
+            //listView widget
+            intent = new Intent(this, ListWidgetService.class);
+            intent.putExtra("recipeId", recipe.getId());
             remoteViews.setRemoteAdapter(R.id.widget_listView, intent);
 
-            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getBaseContext());
-
             appWidgetManager.updateAppWidget(mAppWidgetId, remoteViews);
-            Intent resultValue = new Intent();
-            resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
-            setResult(RESULT_OK, resultValue);
+
+            intent = new Intent();
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+            setResult(RESULT_OK, intent);
             finish();
 
         }

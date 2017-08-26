@@ -1,9 +1,11 @@
 package me.asl.assel.bakingapp.provider.widget;
 
+import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -21,34 +23,33 @@ import static me.asl.assel.bakingapp.provider.content.Contract.RecipeEntrys.COLU
  * Created by assel on 8/25/17.
  */
 public class ListWidgetService extends RemoteViewsService {
-    public static String INTENT_INGREDIENTS = "intentIngredients";
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
-        int id = intent.getIntExtra(INTENT_INGREDIENTS, 0);
+        int id = intent.getIntExtra("recipeId", 0);
         return new ListViewRemoteViewsFactory(this.getApplicationContext(), id);
     }
 }
 
 class ListViewRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
-    Context context;
-    Cursor mCursor;
-    int recipeId;
+    private Context context;
+    private Cursor mCursor;
+    private int recipeId;
 
-    public ListViewRemoteViewsFactory (Context context, int recipeId) {
+    ListViewRemoteViewsFactory(Context context, int recipeId) {
         this.context = context;
         this.recipeId = recipeId;
     }
 
     @Override
     public void onCreate() {
-
+        Uri URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_INGREDIENT).build();
+        if (mCursor != null) mCursor.close();
+        mCursor = context.getContentResolver().query(URI, null, COLUMN_RECIPE_ID+"=?", new String[]{String.valueOf(recipeId)}, null);
+        assert mCursor != null;
     }
 
     @Override
     public void onDataSetChanged() {
-        Uri URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_INGREDIENT).build();
-        if (mCursor != null) mCursor.close();
-        mCursor = context.getContentResolver().query(URI, null, COLUMN_RECIPE_ID+"=?", new String[]{String.valueOf(recipeId)}, null);
     }
 
     @Override
@@ -75,6 +76,9 @@ class ListViewRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactor
         views.setTextViewText(R.id.content, content);
         views.setTextViewText(R.id.qty, qty+" "+measure);
 
+
+        Log.d("WIDGET LISTVIEW",i+". "+content + " : " + qty +":"+measure);
+
         return views;
     }
 
@@ -85,17 +89,17 @@ class ListViewRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactor
 
     @Override
     public int getViewTypeCount() {
-        return 0;
+        return 1;
     }
 
     @Override
     public long getItemId(int i) {
-        return 0;
+        return i;
     }
 
     @Override
     public boolean hasStableIds() {
-        return false;
+        return true;
     }
 
 }
