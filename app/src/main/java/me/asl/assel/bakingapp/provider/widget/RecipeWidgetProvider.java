@@ -21,7 +21,6 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
             "WidgetGetIDs: "+ Arrays.toString(appWidgetIds));
         // There may be multiple widgets active, so update all of them
         for (int appWidgetId : appWidgetIds) {
-            // TODO: 8/25/17 update every widget
         }
     }
 
