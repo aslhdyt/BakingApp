@@ -131,11 +131,7 @@ public class StepsFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        ExoPlayerVideoHandler.getInstance().goToBackground();
-    }
+
 
     @Override
     public void onAttach(Context context) {
@@ -154,37 +150,24 @@ public class StepsFragment extends Fragment {
         mListener = null;
     }
 
+    //before, i though single realease was enough..
+    //now exoPLayer is completely released
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         ExoPlayerVideoHandler.getInstance().releaseVideoPlayer();
     }
-    //    private void initializePlayer(Uri mediaUri) {
-//        if (mExoPlayer == null) {
-//            // Create an instance of the ExoPlayer.
-//            TrackSelector trackSelector = new DefaultTrackSelector();
-//            LoadControl loadControl = new DefaultLoadControl();
-//            mExoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector, loadControl);
-//            mPlayerView.setControllerShowTimeoutMs(3000);
-//            mPlayerView.setPlayer(mExoPlayer);
-//
-//            // Prepare the MediaSource.
-//            String userAgent = Util.getUserAgent(getContext(), "BakingApp");
-//            DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getContext(), userAgent);
-//            ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
-//
-//            Log.d("URI CHECK", String.valueOf(mediaUri));
-//            MediaSource mediaSource = new ExtractorMediaSource(
-//                    mediaUri,
-//                    dataSourceFactory,
-//                    extractorsFactory,
-//                    null,
-//                    null
-//            );
-//
-//            mExoPlayer.prepare(mediaSource);
-//            mExoPlayer.setPlayWhenReady(true);
-//        }
-//    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        ExoPlayerVideoHandler.getInstance().releaseVideoPlayer();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        ExoPlayerVideoHandler.getInstance().releaseVideoPlayer();
+    }
 
 }

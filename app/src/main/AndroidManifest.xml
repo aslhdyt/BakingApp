@@ -17,6 +17,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.RecipeFragmentActivity" />
+
         <activity
             android:name=".ui.SplashActivity"
             android:theme="@style/SplashTheme"

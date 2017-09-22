@@ -1,5 +1,6 @@
 package me.asl.assel.bakingapp.ui;
 
+import android.app.ActionBar;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.res.Configuration;
@@ -8,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import java.util.ArrayList;
 
@@ -55,13 +58,15 @@ public class RecipeFragmentActivity extends FragmentActivity implements Fragment
     private int ORIENTATION_FRAME = R.id.frame_main; //frame_main for portrait
 
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_details);
+
+
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
 
         recipe = getIntent().getExtras().getParcelable("recipe");
         stepsFragment = new StepsFragment[recipe.getSteps().size()];
@@ -156,6 +161,11 @@ public class RecipeFragmentActivity extends FragmentActivity implements Fragment
                 getContentResolver().delete(URI, null, null);
                 swapMenuOptions(false);
                 break;
+
+            case android.R.id.home:
+                //finish() is much simplier than creating whole NavUtils
+                finish();
+                return true;
         }
         return true;
     }

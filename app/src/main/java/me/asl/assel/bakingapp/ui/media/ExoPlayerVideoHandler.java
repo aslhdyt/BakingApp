@@ -44,6 +44,9 @@ public class ExoPlayerVideoHandler {
 
     private ExoPlayerVideoHandler(){}
 
+    //i was attempt to create ExoPlayer go full screen. but keeps failing with blank PLayerView (but audio is intact)
+    //i ask my mentor for help but then he said is not required in the rubrics. so i pass for creating fullscreen for now..
+
     public void prepareExoPlayerForUri(Context context, Uri uri,
                                        SimpleExoPlayerView exoPlayerView){
         if(context != null && uri != null && exoPlayerView != null){

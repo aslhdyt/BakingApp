@@ -52,6 +52,7 @@ public class MainActivity extends Activity implements RecipeCardAdapter.AdapterI
 
         ButterKnife.bind(this);
 
+
         GridLayoutManager manager;
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             manager = new GridLayoutManager(this, 3);
@@ -62,6 +63,9 @@ public class MainActivity extends Activity implements RecipeCardAdapter.AdapterI
 
         if (savedInstanceState != null) {
             list = savedInstanceState.getParcelableArrayList(SplashActivity.DATA);
+            //i forget to set adapter from the savedInstance.. now is added.
+            adapter = new RecipeCardAdapter(list);
+            recyclerView.setAdapter(adapter);
         } else {
             mAppWidgetId = getIntent().getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,AppWidgetManager.INVALID_APPWIDGET_ID);
             if (mAppWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
@@ -73,6 +77,8 @@ public class MainActivity extends Activity implements RecipeCardAdapter.AdapterI
             }
         }
     }
+
+
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
